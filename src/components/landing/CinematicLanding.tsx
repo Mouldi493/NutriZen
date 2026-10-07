@@ -1,4 +1,4 @@
-import { useEffect, useRef, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Check, Clock3, RefreshCw, ScanLine, ShoppingBasket, Sparkles, Utensils } from 'lucide-react';
 import { ScrollToTop } from '@/components/common/ScrollToTop';
@@ -19,11 +19,48 @@ const smoothstep = (p:number,e0:number,e1:number) => {
   return t*t*(3-2*t);
 };
 
+
+const menuProfiles = {
+  famille: {
+    label: 'Famille',
+    note: 'Simple, varié, pensé pour limiter les négociations à table.',
+    meals: [
+      ['Lundi', 'Poulet citron, quinoa et courgettes', '25 min'],
+      ['Mardi', 'Pâtes bolognaise aux légumes', '20 min'],
+      ['Mercredi', 'Saumon, pommes de terre et brocolis', '30 min'],
+      ['Jeudi', 'Wraps de poulet et crudités', '18 min'],
+    ],
+  },
+  veggie: {
+    label: 'Végétarien',
+    note: 'Des repas sans viande avec protéines et variété sur la semaine.',
+    meals: [
+      ['Lundi', 'Dahl de lentilles corail et riz', '24 min'],
+      ['Mardi', 'Bowl pois chiches, feta et légumes', '18 min'],
+      ['Mercredi', 'Lasagnes épinards et ricotta', '32 min'],
+      ['Jeudi', 'Curry de tofu et légumes', '22 min'],
+    ],
+  },
+  sport: {
+    label: 'Objectif sport',
+    note: 'Des repas structurés pour un apport plus soutenu en protéines.',
+    meals: [
+      ['Lundi', 'Poulet paprika, riz et haricots verts', '25 min'],
+      ['Mardi', 'Bowl thon, œufs et pommes de terre', '20 min'],
+      ['Mercredi', 'Dinde, patate douce et légumes', '28 min'],
+      ['Jeudi', 'Pâtes au saumon et épinards', '22 min'],
+    ],
+  },
+} as const;
+
+type MenuProfile = keyof typeof menuProfiles;
+
 export const CinematicLanding = () => {
   const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const heroRef = useRef<HTMLElement | null>(null);
   const signup = () => navigate('/auth/signup');
+  const [menuProfile, setMenuProfile] = useState<MenuProfile>('famille');
 
   useEffect(() => {
     const video = videoRef.current;
@@ -31,9 +68,11 @@ export const CinematicLanding = () => {
     if (!video || !hero) return;
 
     const media = [
-      matchMedia('(max-width: 900px)'),
-      matchMedia('(prefers-reduced-motion: reduce)'),
+      matchMedia('(max-width: 720px)'),
+      matchMedia('(orientation: portrait) and (max-width: 1024px)'),
       matchMedia('(orientation: portrait) and (pointer: coarse)'),
+      matchMedia('(orientation: landscape) and (pointer: coarse) and (max-height: 560px)'),
+      matchMedia('(prefers-reduced-motion: reduce)'),
     ];
     let objectUrl = '';
     let raf = 0;
@@ -42,6 +81,9 @@ export const CinematicLanding = () => {
     let seekBusy = false;
     let pending:number|null = null;
     let active = false;
+    let loaded = false;
+    let controller: AbortController | null = null;
+    let watchdog = 0;
 
     const requestSeek = (time:number) => {
       if (!video.duration) return;
@@ -77,7 +119,7 @@ export const CinematicLanding = () => {
           : i===ranges.length-1
             ? smoothstep(p,a,a+f)
             : smoothstep(p,a,a+f)*(1-smoothstep(p,b-f,b));
-        const k = clamp((p-a)/Math.min(.065,(b-a)*.38),0,1);
+        const k = i === 0 ? 1 : clamp((p-a)/Math.min(.065,(b-a)*.38),0,1);
         el.style.opacity = String(opacity);
         el.style.setProperty('--k', String(k));
       });
@@ -102,20 +144,34 @@ export const CinematicLanding = () => {
       active = true;
       const poster = hero.querySelector<HTMLElement>('.nz-poster');
       if (poster) poster.style.backgroundImage = `url("${HERO_POSTER}")`;
+      addEventListener('scroll', onScroll, { passive:true });
+      paintBands(progress());
+
+      if (loaded) {
+        hero.querySelector('.nz-stage')?.classList.add('video-ready');
+        onScroll();
+        return;
+      }
+
       try {
-        const response = await fetch(HERO_VIDEO, { priority: 'low' } as RequestInit);
+        controller = new AbortController();
+        watchdog = window.setTimeout(() => controller?.abort(), 20000);
+        const response = await fetch(HERO_VIDEO, { signal: controller.signal });
+        if (!response.ok) throw new Error('hero-video');
         const blob = await response.blob();
+        window.clearTimeout(watchdog);
         objectUrl = URL.createObjectURL(blob);
         video.src = objectUrl;
         video.load();
         video.addEventListener('canplay', () => {
+          loaded = true;
           hero.querySelector('.nz-stage')?.classList.add('video-ready');
           onScroll();
         }, { once:true });
       } catch {
+        window.clearTimeout(watchdog);
         hero.querySelector('.nz-stage')?.classList.add('video-failed');
       }
-      addEventListener('scroll', onScroll, { passive:true });
       onScroll();
     };
 
@@ -124,6 +180,8 @@ export const CinematicLanding = () => {
       removeEventListener('scroll', onScroll);
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
+      if (!loaded) controller?.abort();
+      window.clearTimeout(watchdog);
     };
     const apply = () => media.some(q => q.matches) ? disable() : enable();
     media.forEach(q => q.addEventListener('change', apply));
@@ -140,6 +198,7 @@ export const CinematicLanding = () => {
 
   return (
     <div className="nz-cinematic">
+      <a className="nz-skip" href="#main-content">Aller au contenu</a>
       <nav className="nz-nav" aria-label="Navigation principale">
         <Link to="/" aria-label="NutriZen, accueil">
           <img src={new URL('@/assets/nutrizen-main-logo.png', import.meta.url).href} alt="NutriZen" />
@@ -153,6 +212,7 @@ export const CinematicLanding = () => {
         <button className="nz-nav-cta" onClick={signup}>Créer mon menu</button>
       </nav>
 
+      <main id="main-content">
       <section ref={heroRef} className="nz-hero" aria-label="Présentation NutriZen">
         <div className="nz-stage">
           <div className="nz-poster" aria-hidden="true" />
@@ -231,6 +291,51 @@ export const CinematicLanding = () => {
             <div className="nz-step"><b>1</b><div><h3>Décrivez votre foyer</h3><p>Préférences, intolérances, équipements disponibles et objectif principal.</p></div></div>
             <div className="nz-step"><b>2</b><div><h3>Générez votre menu</h3><p>Recevez une semaine de repas cohérente avec votre profil et modifiez ce qui ne vous convient pas.</p></div></div>
             <div className="nz-step"><b>3</b><div><h3>Partez faire les courses</h3><p>Votre liste est déjà reliée au menu. Plus besoin de reconstruire les ingrédients à la main.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+
+      <section className="nz-section nz-demo" aria-labelledby="demo-title">
+        <div className="nz-shell">
+          <div className="nz-demo-head">
+            <div>
+              <div className="nz-eyebrow">Essayez le principe</div>
+              <h2 id="demo-title">Un même outil. Des semaines différentes.</h2>
+            </div>
+            <p className="nz-lead">Choisissez un profil pour voir comment la même structure de semaine peut s'adapter à des besoins différents.</p>
+          </div>
+
+          <div className="nz-profile-tabs" role="group" aria-label="Exemples de profils">
+            {(Object.keys(menuProfiles) as MenuProfile[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                className={`nz-profile-tab ${menuProfile === key ? 'is-active' : ''}`}
+                aria-pressed={menuProfile === key}
+                onClick={() => setMenuProfile(key)}
+              >
+                {menuProfiles[key].label}
+              </button>
+            ))}
+          </div>
+
+          <div className="nz-profile-panel">
+            <div className="nz-profile-copy">
+              <span className="nz-kicker" style={{color:'var(--nz-green)'}}>Exemple de menu</span>
+              <h3>{menuProfiles[menuProfile].label}</h3>
+              <p>{menuProfiles[menuProfile].note}</p>
+              <button className="nz-btn nz-btn-primary" onClick={signup}>Créer mon propre profil <ArrowRight size={17}/></button>
+            </div>
+            <div className="nz-profile-meals" aria-live="polite">
+              {menuProfiles[menuProfile].meals.map(([day, meal, time]) => (
+                <div className="nz-profile-meal" key={day}>
+                  <span>{day}</span>
+                  <strong>{meal}</strong>
+                  <small>{time}</small>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -323,6 +428,8 @@ export const CinematicLanding = () => {
           <button className="nz-btn nz-btn-primary" onClick={signup}>Créer mon menu gratuit <ArrowRight size={17}/></button>
         </div>
       </section>
+
+      </main>
 
       <footer className="nz-footer">
         <div className="nz-shell nz-footer-row">
