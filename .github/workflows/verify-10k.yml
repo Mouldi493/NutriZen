@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - feat/10k-nutrizen-landing
+  pull_request:
+    branches:
+      - main
 
 jobs:
   verify:
