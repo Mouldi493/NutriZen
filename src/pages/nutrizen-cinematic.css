@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Mono:wght@500;600&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+.nz-cinematic{--nz-ink:#13231d;--nz-cream:#f4f0e8;--nz-sage:#dce8df;--nz-green:#1f7a57;--nz-deep:#123f32;--nz-apricot:#f29a67;--nz-line:rgba(19,35,29,.12);background:var(--nz-cream);color:var(--nz-ink);font-family:Manrope,ui-sans-serif,system-ui,sans-serif;overflow-x:clip}
+.nz-cinematic *{box-sizing:border-box}
+.nz-shell{width:min(1180px,calc(100% - 40px));margin:0 auto}
+.nz-nav{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:60;width:min(1180px,calc(100% - 28px));display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid rgba(255,255,255,.2);background:rgba(13,39,31,.72);backdrop-filter:blur(18px);border-radius:22px;color:#fff;box-shadow:0 18px 50px rgba(0,0,0,.18)}
+.nz-nav img{height:42px;width:auto;filter:brightness(0) invert(1)}
+.nz-navlinks{display:flex;gap:24px;align-items:center;font-size:14px}
+.nz-navlinks a{color:rgba(255,255,255,.82);text-decoration:none}
+.nz-nav-cta,.nz-btn{border:0;border-radius:999px;font-weight:800;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease,background .25s ease}
+.nz-nav-cta{padding:11px 17px;background:#fff;color:var(--nz-deep)}
+.nz-nav-cta:hover,.nz-btn:hover{transform:translateY(-2px)}
+.nz-hero{height:430vh;position:relative;background:#0f2f26}
+.nz-stage{position:sticky;top:0;height:100vh;overflow:hidden}
+.nz-stage video,.nz-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.nz-poster{background-size:cover;background-position:center;transition:opacity .45s ease}
+.nz-stage.video-ready .nz-poster{opacity:0}
+.nz-stage:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(5,20,16,.05),rgba(5,20,16,.62) 78%,rgba(5,20,16,.82) 100%);pointer-events:none}
+.nz-band{position:absolute;inset:0;display:flex;align-items:center;padding:0 max(6vw,30px);opacity:0;pointer-events:none;z-index:5}
+.nz-band-inner{width:min(560px,44vw);color:#fff;text-shadow:0 2px 30px rgba(0,0,0,.42);transform:translateY(calc((1 - var(--k,0))*26px));opacity:var(--k,0)}
+.nz-band-right .nz-band-inner{margin-left:auto}
+.nz-kicker{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#d7f1e5;margin-bottom:18px}
+.nz-band h1,.nz-band h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;line-height:.96;letter-spacing:-.035em;margin:0}
+.nz-band h1{font-size:clamp(52px,7vw,108px)}
+.nz-band h2{font-size:clamp(44px,6vw,84px)}
+.nz-band p{font-size:clamp(18px,1.6vw,24px);line-height:1.45;color:rgba(255,255,255,.86);max-width:34ch;margin:22px 0 0}
+.nz-hero-cta{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;pointer-events:auto}
+.nz-btn{padding:15px 22px;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none}
+.nz-btn-primary{background:var(--nz-apricot);color:#1d241f;box-shadow:0 12px 34px rgba(242,154,103,.3)}
+.nz-btn-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.nz-scroll-cue{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:8;color:rgba(255,255,255,.72);font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.nz-mobile-hero{display:none;min-height:92vh;padding:130px 0 68px;background:linear-gradient(rgba(7,28,22,.4),rgba(7,28,22,.72)),var(--mobile-poster);background-size:cover;background-position:center;color:#fff}
+.nz-mobile-hero h1{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(48px,13vw,74px);line-height:.96;font-weight:400;margin:0;max-width:8ch}
+.nz-mobile-hero p{font-size:19px;line-height:1.45;color:rgba(255,255,255,.86);max-width:30ch;margin:24px 0}
+.nz-section{padding:110px 0}
+.nz-section-dark{background:var(--nz-deep);color:#fff}
+.nz-eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--nz-green);margin-bottom:14px}
+.nz-section-dark .nz-eyebrow{color:#bde0cc}
+.nz-section h2{font-family:"DM Serif Display",Georgia,serif;font-weight:400;font-size:clamp(42px,5.3vw,76px);line-height:1;letter-spacing:-.035em;margin:0 0 22px}
+.nz-lead{font-size:20px;line-height:1.55;color:rgba(19,35,29,.72);max-width:52ch}
+.nz-section-dark .nz-lead{color:rgba(255,255,255,.72)}
+.nz-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:56px}
+.nz-card{padding:30px;border-radius:26px;background:rgba(255,255,255,.66);border:1px solid var(--nz-line);box-shadow:0 20px 55px rgba(29,50,42,.07)}
+.nz-card .num{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--nz-green)}
+.nz-card h3{font-size:22px;margin:44px 0 10px}
+.nz-card p{margin:0;color:rgba(19,35,29,.68);line-height:1.55}
+.nz-flow{display:grid;grid-template-columns:.9fr 1.1fr;gap:68px;align-items:start}
+.nz-steps{display:grid;gap:16px}
+.nz-step{display:grid;grid-template-columns:54px 1fr;gap:18px;padding:22px 0;border-bottom:1px solid var(--nz-line)}
+.nz-step b{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--nz-sage);color:var(--nz-deep)}
+.nz-step h3{margin:0 0 6px;font-size:22px}
+.nz-step p{margin:0;color:rgba(19,35,29,.66);line-height:1.5}
+.nz-proof-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:18px;margin-top:50px}
+.nz-proof-main{min-height:460px;border-radius:30px;background:linear-gradient(145deg,#e7efe9,#fff7ef);padding:36px;position:relative;overflow:hidden;border:1px solid var(--nz-line)}
+.nz-ui-mock{position:absolute;right:-40px;bottom:-34px;width:min(520px,70%);background:#fff;border-radius:28px;padding:20px;box-shadow:0 30px 80px rgba(18,63,50,.18);transform:rotate(-3deg)}
+.nz-ui-row{display:grid;grid-template-columns:64px 1fr auto;gap:14px;align-items:center;padding:13px 0;border-bottom:1px solid #edf1ed}
+.nz-ui-thumb{width:64px;height:54px;border-radius:14px;background:linear-gradient(135deg,#dce8df,#f7c5a6)}
+.nz-proof-side{display:grid;gap:18px}
+.nz-mini{border-radius:28px;padding:28px;background:#fff;border:1px solid var(--nz-line)}
+.nz-mini strong{font-family:"DM Serif Display",Georgia,serif;font-size:42px;font-weight:400;color:var(--nz-green)}
+.nz-quote{font-size:24px;line-height:1.35;margin:0 0 18px}
+.nz-market-note{font-size:13px;color:rgba(19,35,29,.54)}
+.nz-pricing{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:46px}
+.nz-price{border-radius:28px;padding:34px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
+.nz-price.featured{background:#fff;color:var(--nz-ink)}
+.nz-price .price{font-family:"DM Serif Display",Georgia,serif;font-size:64px;line-height:1;margin:18px 0}
+.nz-price ul{padding:0;margin:24px 0 30px;list-style:none;display:grid;gap:10px}
+.nz-price li:before{content:"✓";margin-right:10px;color:var(--nz-apricot);font-weight:900}
+.nz-faq{display:grid;grid-template-columns:.75fr 1.25fr;gap:70px}
+.nz-faq-item{padding:22px 0;border-bottom:1px solid var(--nz-line)}
+.nz-faq-item h3{font-size:20px;margin:0 0 8px}
+.nz-faq-item p{margin:0;color:rgba(19,35,29,.66);line-height:1.55}
+.nz-final{padding:120px 0;background:linear-gradient(135deg,#e3eee7,#fff0e5);text-align:center}
+.nz-final h2{font-family:"DM Serif Display",Georgia,serif;font-size:clamp(48px,6vw,88px);font-weight:400;line-height:.96;margin:0 auto 24px;max-width:11ch}
+.nz-footer{padding:36px 0;background:#102a22;color:rgba(255,255,255,.72)}
+.nz-footer-row{display:flex;justify-content:space-between;gap:24px;align-items:center;flex-wrap:wrap}
+.nz-footer a{color:rgba(255,255,255,.72);text-decoration:none;margin-left:18px}
+@media (max-width:900px){
+ .nz-navlinks{display:none}
+ .nz-hero{display:none}
+ .nz-mobile-hero{display:block}
+ .nz-grid3,.nz-flow,.nz-proof-grid,.nz-pricing,.nz-faq{grid-template-columns:1fr}
+ .nz-section{padding:76px 0}
+ .nz-flow{gap:34px}
+ .nz-ui-mock{position:relative;right:auto;bottom:auto;width:100%;margin-top:36px;transform:none}
+}
+@media (prefers-reduced-motion:reduce){
+ .nz-cinematic *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+ .nz-hero{display:none}
+ .nz-mobile-hero{display:block}
+}
